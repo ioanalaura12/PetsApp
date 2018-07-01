@@ -19,6 +19,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -35,7 +36,6 @@ import com.example.android.pets.Data.PetDbHelper;
  */
 public class CatalogActivity extends AppCompatActivity {
 
-    private PetDbHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,6 @@ public class CatalogActivity extends AppCompatActivity {
             }
         });
 
-        mDbHelper = new PetDbHelper(this);
         displayDatabaseInfo();
 
         }
@@ -65,8 +64,6 @@ public class CatalogActivity extends AppCompatActivity {
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
 
-         // Create and/or open a database to read from it
-         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
             // Define a projection that specifies which columns from the database
             // you will actually use after this query.
@@ -81,7 +78,7 @@ public class CatalogActivity extends AppCompatActivity {
 
             // Perform this raw SQL query "SELECT * FROM pets"
           // to get a Cursor that contains all rows from the pets table.
-          Cursor cursor = db.query(
+          /*Cursor cursor = db.query(
                   PetContract.PetEntry.TABLE_NAME,   // The table to query
                   projection,             // The array of columns to return (pass null to get all)
                   null,              // The columns for the WHERE clause
@@ -89,6 +86,14 @@ public class CatalogActivity extends AppCompatActivity {
                   null,                   // don't group the rows
                   null,                   // don't filter by row groups
                   null               // The sort order
+          );*/
+
+          Cursor cursor = getContentResolver().query(
+                  PetContract.PetEntry.CONTENT_URI,   // The table to query
+                  projection,             // The array of columns to return (pass null to get all)
+                  null,              // The columns for the WHERE clause
+                  null,          // The values for the WHERE clause
+                  null                   // don't group the rows
           );
 
             TextView displayView = (TextView) findViewById(R.id.text_view_pet);
@@ -142,8 +147,6 @@ public class CatalogActivity extends AppCompatActivity {
     }
 
     private void insertPet(){
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         // Create a ContentValues object where column names are the keys,
         // and Toto's pet attributes are the values.
         ContentValues values = new ContentValues();
@@ -152,14 +155,11 @@ public class CatalogActivity extends AppCompatActivity {
         values.put(PetContract.PetEntry.COLUMN_PET_GENDER, PetContract.PetEntry.GENDER_MALE);
         values.put(PetContract.PetEntry.COLUMN_PET_WEIGHT, 7);
 
-        // Insert a new row for Toto in the database, returning the ID of that new row.
-        // The first argument for db.insert() is the pets table name.
-        // The second argument provides the name of a column in which the framework
-        // can insert NULL in the event that the ContentValues is empty (if
-        // this is set to "null", then the framework will not insert a row when
-        // there are no values).
-        // The third argument is the ContentValues object containing the info for Toto.
-        long newRowId = db.insert(PetContract.PetEntry.TABLE_NAME, null, values);
+        // Insert a new row for Toto into the provider using the ContentResolver.
+        // Use the {@link PetEntry#CONTENT_URI} to indicate that we want to insert
+        // into the pets database table.
+        // Receive the new content URI that will allow us to access Toto's data in the future.
+        Uri newUri = getContentResolver().insert(PetContract.PetEntry.CONTENT_URI, values);
 
     }
 
