@@ -39,23 +39,32 @@ import com.example.android.pets.Data.PetDbHelper;
  */
 public class EditorActivity extends AppCompatActivity {
 
-    /** EditText field to enter the pet's name */
+    /**
+     * EditText field to enter the pet's name
+     */
     private EditText mNameEditText;
 
-    /** EditText field to enter the pet's breed */
+    /**
+     * EditText field to enter the pet's breed
+     */
     private EditText mBreedEditText;
 
-    /** EditText field to enter the pet's weight */
+    /**
+     * EditText field to enter the pet's weight
+     */
     private EditText mWeightEditText;
 
-    /** EditText field to enter the pet's gender */
+    /**
+     * EditText field to enter the pet's gender
+     */
     private Spinner mGenderSpinner;
 
     /**
      * Gender of the pet. The possible values are:
      * 0 for unknown gender, 1 for male, 2 for female.
      */
-    private int mGender = PetContract.PetEntry.GENDER_UNKNOWN;;
+    private int mGender = PetContract.PetEntry.GENDER_UNKNOWN;
+    ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +119,7 @@ public class EditorActivity extends AppCompatActivity {
         });
     }
 
-    private void insertPet(){
+    private void insertPet() {
         // Read from input fields
         // Use trim to eliminate leading or trailing white space
         String nameString = mNameEditText.getText().toString().trim();
