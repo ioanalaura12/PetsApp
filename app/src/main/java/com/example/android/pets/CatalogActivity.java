@@ -15,6 +15,7 @@
  */
 package com.example.android.pets;
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import com.example.android.pets.Data.PetContract;
 
@@ -62,9 +64,24 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         View emptyView = findViewById(R.id.empty_view);
         petListView.setEmptyView(emptyView);
 
-        //Setup an adapter to create a list item for each data row from pest table
+        //Setup an adapter to create a list item for each data row from pet table
         mCursorAdapter = new PetCursorAdapter(this, null);
         petListView.setAdapter(mCursorAdapter);
+        // Open EditorActivity when a pet is tapped
+        petListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent myIntent = new Intent(CatalogActivity.this, EditorActivity.class);
+                startActivity(myIntent);
+                // form the content uri for the tapped pet
+                Uri currentPetUri = ContentUris.withAppendedId(PetContract.PetEntry.CONTENT_URI,id);
+
+                //set the uri in the data field of the intent
+                myIntent.setData(currentPetUri);
+
+                startActivity(myIntent);
+            }
+        });
 
         //KickOff the loader
         getLoaderManager().initLoader(PET_LOADER, null, this);
